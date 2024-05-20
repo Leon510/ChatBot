@@ -1,7 +1,7 @@
 Hosting commands:
 
-$ docker build --platform=linux/arm64 -t leon510/chatbotv:<mytag> .
-$ docker push leon510/chatbotv:<mytag>
+$ docker build --platform=linux/arm64 -t <name>/<containername>:<mytag> .
+$ docker push <name>/<containername>:<mytag>
 
 start command:
 npm run dev 
