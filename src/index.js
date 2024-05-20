@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { OpenAI } = require("openai");
-const CHANNELS = ["1242154113836257300"];
+const CHANNELS = ["820075629889847356"];
 const IGNORE_PREFIX = "!";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -48,7 +48,7 @@ client.on("messageCreate", async (message) => {
   let conversation = [];
   conversation.push({
     role: "system",
-    content: "You are a helpful assistant.",
+    content: "Sei ein hilfreicher Assistent",
   });
 
   let prevMessages = await message.channel.messages.fetch({ limit: 10 });
