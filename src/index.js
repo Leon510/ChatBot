@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { OpenAI } = require("openai");
-const CHANNELS = ["820075629889847356"];
+const CHANNELS = [process.env.CHANNEL];
 const IGNORE_PREFIX = "!";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
