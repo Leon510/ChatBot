@@ -1,7 +1,6 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { OpenAI } = require("openai");
-
 const CHANNELS = ["1242154113836257300"];
 const IGNORE_PREFIX = "!";
 
@@ -86,3 +85,4 @@ client.on("messageCreate", async (message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
