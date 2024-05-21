@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { OpenAI } = require("openai");
+const { Partials } = require("discord.js");
 const CHANNELS = [process.env.CHANNEL];
 const IGNORE_PREFIX = "!";
 
@@ -13,6 +14,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
   ],
+  partials: [Partials.Channel, Partials.Message],
 });
 
 client.once("ready", () => {
@@ -81,8 +83,48 @@ client.on("messageCreate", async (message) => {
     messages: conversation,
   });
 
+  message.author.send(response.choices[0].message.content);
+});
+
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+
+  let conversation = [];
+  conversation.push({
+    role: "system",
+    content: "Sei ein hilfreicher Assistent",
+  });
+
+  let prevMessages = await message.channel.messages.fetch({ limit: 10 });
+  prevMessages.reverse();
+
+  prevMessages.forEach((msg) => {
+    if (msg.author.bot && msg.author.id !== client.user.id) return;
+    if (msg.content.startsWith(IGNORE_PREFIX)) return;
+
+    const username = msg.author.username.replace(/[^a-zA-Z0-9]/g, "");
+
+    if (msg.author.id === client.user.id) {
+      conversation.push({
+        role: "assistant",
+        name: username,
+        content: msg.content,
+      });
+      return;
+    }
+
+    conversation.push({
+      role: "user",
+      name: username,
+      content: msg.content,
+    });
+  });
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: conversation,
+  });
   message.reply(response.choices[0].message.content);
 });
 
 client.login(process.env.DISCORD_TOKEN);
-
