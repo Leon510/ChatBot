@@ -39,7 +39,7 @@ client.on("interactionCreate", async (interaction) => {
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.channel.type !== 'DM' && message.channel.id !== CHANNELS) return;
+  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id)) return;
 
   let conversation = [];
   conversation.push({
