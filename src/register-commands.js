@@ -1,20 +1,9 @@
 require("dotenv").config();
 const { REST, Routes } = require("discord.js");
-const commands = [
-  {
-    name: "hey",
-    description: "Replies with hey!",
-  },
-  {
-    name: "santa",
-    description: "Congratulations from our Santa",
-  },
-  {
-    name: "ping",
-    description: "Pong!",
-  },
-  { name: "chatgpt", description: "ChatGPT" },
-];
+const dailyCommand = require("./commands/economy/daily"); // Pfad zu Ihrem daily-Befehlsmodul
+const gambleCommand = require("./commands/economy/gamble"); // Pfad zu Ihrem gamble-Befehlsmodul
+const balanceCommand = require("./commands/economy/balance");
+const commands = [dailyCommand.data, gambleCommand.data, balanceCommand.data];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 

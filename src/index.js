@@ -2,9 +2,12 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { OpenAI } = require("openai");
 const { Partials } = require("discord.js");
+const gambleCommand = require("./commands/economy/gamble");
+const dailyCommand = require("./commands/economy/daily");
+const balanceCommand = require("./commands/economy/balance");
 const CHANNELS = [process.env.CHANNEL];
+const mongoose = require("mongoose");
 const IGNORE_PREFIX = "!";
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const client = new Client({
@@ -36,10 +39,24 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "gamble") {
+    gambleCommand.run({ interaction });
+  }
+  if (interaction.commandName === "daily") {
+    dailyCommand.run({ interaction });
+  }
+  if (interaction.commandName === "balance") {
+    balanceCommand.run({ interaction });
+  }
+});
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id)) return;
+  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id))
+    return;
 
   let conversation = [];
   conversation.push({
@@ -79,4 +96,8 @@ client.on("messageCreate", async (message) => {
   message.reply(response.choices[0].message.content);
 });
 
-client.login(process.env.DISCORD_TOKEN);
+(async () => {
+  await mongoose.connect(process.env.MONGODB_URI);
+  console.log("Connected to MongoDB");
+  client.login(process.env.DISCORD_TOKEN);
+})();
