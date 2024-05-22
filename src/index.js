@@ -36,63 +36,15 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
+
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.content.startsWith(IGNORE_PREFIX)) return;
-  if (
-    !CHANNELS.includes(message.channelId) &&
-    !message.mentions.users.has(client.user.id)
-  )
-    return;
-
-  await message.channel.sendTyping();
+  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id)) return;
 
   let conversation = [];
   conversation.push({
     role: "system",
-    content: "Sei ein hilfreicher Assistent",
-  });
-
-  let prevMessages = await message.channel.messages.fetch({ limit: 10 });
-  prevMessages.reverse();
-
-  prevMessages.forEach((msg) => {
-    if (msg.author.bot && msg.author.id !== client.user.id) return;
-    if (msg.content.startsWith(IGNORE_PREFIX)) return;
-
-    const username = msg.author.username.replace(/[^a-zA-Z0-9]/g, "");
-
-    if (msg.author.id === client.user.id) {
-      conversation.push({
-        role: "assistant",
-        name: username,
-        content: msg.content,
-      });
-      return;
-    }
-
-    conversation.push({
-      role: "user",
-      name: username,
-      content: msg.content,
-    });
-  });
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: conversation,
-  });
-
-  message.author.send(response.choices[0].message.content);
-});
-
-client.on("messageCreate", async (message) => {
-  if (message.author.bot) return;
-
-  let conversation = [];
-  conversation.push({
-    role: "system",
-    content: "Sei ein hilfreicher Assistent",
+    content: "Sei ein hilfreicher Assistent.",
   });
 
   let prevMessages = await message.channel.messages.fetch({ limit: 10 });
