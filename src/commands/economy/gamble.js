@@ -23,7 +23,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setDescription(
-          "Du hast noch kein Konto! Ich habe eins für dich erstellt. Gib /daily ein um dein täglichen Bonus zu bekommen"
+          "Du hast noch kein Konto! Ich habe eins für dich erstellt. Gib **/daily** ein um dein täglichen Bonus zu bekommen"
         );
       await interaction.reply({ embeds: [embed], ephemeral: true });
 
@@ -37,7 +37,7 @@ module.exports = {
     if (amount < 10) {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
-        .setDescription("Du musst mindestens 10€ betragen!");
+        .setDescription("Du musst mindestens **10€** betragen!");
       await interaction.reply({ embeds: [embed], ephemeral: true });
       return;
     }
@@ -45,7 +45,7 @@ module.exports = {
     if (amount > 5000) {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
-        .setDescription("Es darf maximal 5000€ betragen!");
+        .setDescription("Es darf maximal **5000€** betragen!");
       await interaction.reply({ embeds: [embed], ephemeral: true });
       return;
     }
@@ -54,7 +54,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setDescription(
-          "Du hast nicht genug Geld! Du hast nur " + userProfile.balance + "€"
+          `Du hast nicht genug Geld! Du hast nur **${userProfile.balance}€**`
         );
       await interaction.reply({ embeds: [embed], ephemeral: true });
       return;
@@ -65,7 +65,7 @@ module.exports = {
     let number;
     let probability = Math.floor(Math.random() * 100) + 1;
 
-    if (probability > 45) {
+    if (probability > 50) {
       number = Math.floor(Math.random() * 50) + 51;
     } else {
       number = Math.floor(Math.random() * 50) + 1;
@@ -76,14 +76,14 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setDescription(
-          "Die Zahl ist " + number + "! Du hast " + amount + "€ gewonnen!"
+          `Die Zahl ist **${number}!**  Du hast  **${amount}€** gewonnen!`
         );
       await interaction.reply({ embeds: [embed], ephemeral: true });
     } else {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setDescription(
-          "Die Zahl ist " + number + "! Du hast " + amount + "€ verloren!"
+          `Die Zahl ist **${number}!**  Du hast  **${amount}€** verloren!`
         );
       await interaction.reply({ embeds: [embed], ephemeral: true });
     }

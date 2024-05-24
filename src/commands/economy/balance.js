@@ -3,18 +3,23 @@ const UserProfile = require("../../schemas/UserProfile");
 
 module.exports = {
   run: async ({ interaction }) => {
-
+    if (!interaction.inGuild()) {
+      interaction.reply({
+        content: "You must be in a server to use this command!",
+        ephemeral: true,
+      });
+      return;
+    }
     try {
-      const userId = interaction.member ? interaction.member.id : interaction.user.id;
-
       let userProfile = await UserProfile.findOne({
-        userId: userId,      });
+        userId: interaction.member.id,
+      });
       if (userProfile) {
         const embed = new EmbedBuilder()
 
           .setColor(0x0099ff)
           .setTitle("Dein Kontostand")
-          .setDescription(`Dein Kontostand beträgt ${userProfile.balance}€`);
+          .setDescription(`Dein Kontostand beträgt **${userProfile.balance}€**`);
         await interaction.reply({ embeds: [embed] });
       } else {
         userProfile = new UserProfile({

@@ -28,7 +28,7 @@ module.exports = {
             .setColor(0x0099ff)
             .setTitle("Täglicher Bonus")
             .setDescription(
-              `Du hast den Täglichen Bonus bereits erhalten! Dein Aktueller Kontostand beträgt ${userProfile.balance}€`
+              `Du hast den Täglichen Bonus bereits erhalten! Dein Aktueller Kontostand beträgt **${userProfile.balance}€**`
             );
             await interaction.reply({ embeds: [embed], ephemeral: true });
 
@@ -49,7 +49,7 @@ module.exports = {
       .setColor(0x0099ff)
       .setTitle("Täglicher Bonus")
       .setDescription(
-        `Dein Täglichen Bonus von ${dailyAmount}€ hast du erhalten. \nDu hast jetzt ${userProfile.balance}€`
+        `Dein Täglichen Bonus von **${dailyAmount}€** hast du erhalten. \nDu hast jetzt **${userProfile.balance}€**`
       );
       await interaction.reply({ embeds: [embed] });
 

@@ -4,7 +4,14 @@ const dailyCommand = require("./commands/economy/daily"); // Pfad zu Ihrem daily
 const gambleCommand = require("./commands/economy/gamble"); // Pfad zu Ihrem gamble-Befehlsmodul
 const balanceCommand = require("./commands/economy/balance");
 const leaderboardCommand = require("./commands/economy/leaderboard");
-const commands = [dailyCommand.data, gambleCommand.data, balanceCommand.data, leaderboardCommand.data];
+const coinflipCommand = require("./commands/economy/coinflip");
+const commands = [
+  dailyCommand.data,
+  gambleCommand.data,
+  balanceCommand.data,
+  leaderboardCommand.data,
+  coinflipCommand.data,
+];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
@@ -13,7 +20,10 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
     console.log("Deleting server slash commands...");
 
     await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+      Routes.applicationGuildCommands(
+        process.env.CLIENT_ID,
+        process.env.GUILD_ID
+      ),
       { body: [] }
     );
 
@@ -21,10 +31,9 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
     console.log("Registering global slash commands...");
 
-    await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
-      { body: commands }
-    );
+    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
+      body: commands,
+    });
 
     console.log("Global slash commands were registered successfully!");
   } catch (error) {
