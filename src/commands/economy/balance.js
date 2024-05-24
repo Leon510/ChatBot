@@ -3,17 +3,12 @@ const UserProfile = require("../../schemas/UserProfile");
 
 module.exports = {
   run: async ({ interaction }) => {
-    if (!interaction.inGuild()) {
-      interaction.reply({
-        content: "You must be in a server to use this command!",
-        ephemeral: true,
-      });
-      return;
-    }
+
     try {
+      const userId = interaction.member ? interaction.member.id : interaction.user.id;
+
       let userProfile = await UserProfile.findOne({
-        userId: interaction.member.id,
-      });
+        userId: userId,      });
       if (userProfile) {
         const embed = new EmbedBuilder()
 
