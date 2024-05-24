@@ -6,10 +6,14 @@ const gambleCommand = require("./commands/economy/gamble");
 const dailyCommand = require("./commands/economy/daily");
 const balanceCommand = require("./commands/economy/balance");
 const leaderboardCommand = require("./commands/economy/leaderboard");
+const coinflipCommand = require("./commands/economy/coinflip");
 const CHANNELS = [process.env.CHANNEL];
 const mongoose = require("mongoose");
 const IGNORE_PREFIX = "!";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const cooldowns = new Map();
+
+
 
 const client = new Client({
   intents: [
@@ -27,6 +31,9 @@ client.once("ready", () => {
   );
 });
 
+
+
+
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
@@ -43,6 +50,19 @@ client.on("interactionCreate", async (interaction) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
+  // Check if the user is on cooldown
+  const lastCommand = cooldowns.get(interaction.user.id);
+  if (lastCommand && (Date.now() - lastCommand) < 3000) {
+    interaction.reply({
+      content: "Du musst 3 Sekunden warten, bevor du einen Befehl erneut ausführen kannst!",
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Update the time the user last ran a command
+  cooldowns.set(interaction.user.id, Date.now());
+
   if (interaction.commandName === "gamble") {
     gambleCommand.run({ interaction });
   }
@@ -55,8 +75,10 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.commandName === "leaderboard") {
     leaderboardCommand.run({ interaction });
   }
+  if (interaction.commandName === "coinflip") {
+    coinflipCommand.run({ interaction });
+  }
 });
-
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id))
