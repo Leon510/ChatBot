@@ -5,6 +5,7 @@ const { Partials } = require("discord.js");
 const gambleCommand = require("./commands/economy/gamble");
 const dailyCommand = require("./commands/economy/daily");
 const balanceCommand = require("./commands/economy/balance");
+const leaderboardCommand = require("./commands/economy/leaderboard");
 const CHANNELS = [process.env.CHANNEL];
 const mongoose = require("mongoose");
 const IGNORE_PREFIX = "!";
@@ -50,6 +51,9 @@ client.on("interactionCreate", async (interaction) => {
   }
   if (interaction.commandName === "balance") {
     balanceCommand.run({ interaction });
+  }
+  if (interaction.commandName === "leaderboard") {
+    leaderboardCommand.run({ interaction });
   }
 });
 
