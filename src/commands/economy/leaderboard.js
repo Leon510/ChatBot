@@ -4,6 +4,9 @@ const UserProfile = require("../../schemas/UserProfile");
 module.exports = {
   run: async ({ interaction }) => {
     try {
+      // Überprüfen, ob die Interaktion bereits bearbeitet wurde
+      if (interaction.deferred || interaction.replied) return;
+
       // Send a preliminary reply
       await interaction.deferReply();
 

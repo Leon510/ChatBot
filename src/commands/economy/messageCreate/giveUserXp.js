@@ -9,15 +9,23 @@ const calculateLevelXP = require("../../utils/calculateLevelXP");
 module.exports = async (interaction, xpToGive) => {
   console.log(`User ${interaction.user.id} received ${xpToGive} XP`);
 
-  const query = {
-    userId: interaction.user.id,
-  };
-
   try {
+    // Stellen Sie sicher, dass xpToGive eine gültige Zahl ist
+    if (isNaN(xpToGive)) {
+      throw new Error("Invalid XP value");
+    }
+
+    const query = {
+      userId: interaction.user.id,
+    };
+
     let userProfile = await UserProfile.findOne(query);
 
     if (userProfile) {
+      // Aktualisieren Sie das XP-Profil des Benutzers
       userProfile.xp += xpToGive;
+
+      // Überprüfen, ob der Benutzer ein neues Level erreicht hat
       if (userProfile.xp >= calculateLevelXP(userProfile.level)) {
         userProfile.xp = 0;
         userProfile.level += 1;
@@ -31,16 +39,17 @@ module.exports = async (interaction, xpToGive) => {
         await interaction.channel.send({ embeds: [embed] });
       }
 
-      await userProfile.save().catch((e) => console.log(e));
+      await userProfile.save(); // Fehler werden automatisch abgefangen
     } else {
+      // Erstellen Sie ein neues UserProfile-Dokument für den Benutzer
       const newUserProfile = new UserProfile({
         userId: interaction.user.id,
         xp: xpToGive,
       });
 
-      await newUserProfile.save().catch((e) => console.log(e));
+      await newUserProfile.save(); // Fehler werden automatisch abgefangen
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

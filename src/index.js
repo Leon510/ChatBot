@@ -64,7 +64,6 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.commandName === "daily") {
     dailyCommand.run({ interaction });
     userProfile.commands += 1;
-    await giveUserXP(interaction, "daily", true); 
     userProfile.save();
   }
   if (interaction.commandName === "balance") {

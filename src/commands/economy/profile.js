@@ -5,6 +5,9 @@ const calculateLevelXP = require("../utils/calculateLevelXP");
 module.exports = {
   run: async ({ interaction }) => {
     try {
+      // Überprüfen, ob die Interaktion gültig ist
+      if (!interaction) return;
+
       const targetUser =
         interaction.options.getUser("user") || interaction.user;
 
@@ -22,7 +25,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setTitle("Dein Profil")
-        .setDescription(`Kontostand**${userProfile.balance}€**`);
+        .setDescription(`Kontostand** ${userProfile.balance}€**`);
       embed.addFields({
         name: "Gesamte Commands",
         value: `${userProfile.commands}`,
