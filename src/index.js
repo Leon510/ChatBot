@@ -1,19 +1,22 @@
-require("dotenv").config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
 const { OpenAI } = require("openai");
-const { Partials } = require("discord.js");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
 const gambleCommand = require("./commands/economy/gamble");
 const dailyCommand = require("./commands/economy/daily");
 const balanceCommand = require("./commands/economy/balance");
 const leaderboardCommand = require("./commands/economy/leaderboard");
 const coinflipCommand = require("./commands/economy/coinflip");
+const profileCommand = require("./commands/economy/profile");
+const UserProfile = require("./schemas/UserProfile");
+const giveUserXP = require("./commands/economy/messageCreate/giveUserXp");
+
 const CHANNELS = [process.env.CHANNEL];
-const mongoose = require("mongoose");
 const IGNORE_PREFIX = "!";
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const cooldowns = new Map();
-
-
 
 const client = new Client({
   intents: [
@@ -26,25 +29,7 @@ const client = new Client({
 });
 
 client.once("ready", () => {
-  console.log(
-    `Ready! Logged in as ${client.user.tag}! I'm on ${client.guilds.cache.size} servers!`
-  );
-});
-
-
-
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-
-  if (interaction.commandName === "santa") {
-    const embed = new EmbedBuilder()
-      .setColor(0x0099ff)
-      .setImage(
-        `https://media3.giphy.com/media/pyrgLdTlTcSdbjZUyS/200w.gif?cid=6c09b9529ipvkpsj4psk85a0f62uxm9ot2n98kfcxn51p2z1&ep=v1_gifs_search&rid=200w.gif&ct=g`
-      );
-    await interaction.reply({ embeds: [embed] });
-  }
+  console.log(`Ready! Logged in as ${client.user.tag}! I'm on ${client.guilds.cache.size} servers!`);
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -52,7 +37,7 @@ client.on("interactionCreate", async (interaction) => {
 
   // Check if the user is on cooldown
   const lastCommand = cooldowns.get(interaction.user.id);
-  if (lastCommand && (Date.now() - lastCommand) < 3000) {
+  if (lastCommand && Date.now() - lastCommand < 3000) {
     interaction.reply({
       content: "Du musst 3 Sekunden warten, bevor du einen Befehl erneut ausführen kannst!",
       ephemeral: true,
@@ -63,26 +48,49 @@ client.on("interactionCreate", async (interaction) => {
   // Update the time the user last ran a command
   cooldowns.set(interaction.user.id, Date.now());
 
+  let userProfile = await UserProfile.findOne({ userId: interaction.user.id });
+
+  // If no user profile was found, create a new one
+  if (!userProfile) {
+    userProfile = new UserProfile({ userId: interaction.user.id });
+    await userProfile.save();
+  }
+
   if (interaction.commandName === "gamble") {
-    gambleCommand.run({ interaction });
+    const success = gambleCommand.run({ interaction });
+    userProfile.commands += 1;
+    userProfile.save();
   }
   if (interaction.commandName === "daily") {
     dailyCommand.run({ interaction });
+    userProfile.commands += 1;
+    await giveUserXP(interaction, "daily", true); 
+    userProfile.save();
   }
   if (interaction.commandName === "balance") {
     balanceCommand.run({ interaction });
+    userProfile.commands += 1;
+    userProfile.save();
   }
   if (interaction.commandName === "leaderboard") {
     leaderboardCommand.run({ interaction });
+    userProfile.commands += 1;
+    userProfile.save();
   }
   if (interaction.commandName === "coinflip") {
-    coinflipCommand.run({ interaction });
+    const success = coinflipCommand.run({ interaction });
+    userProfile.commands += 1;
+    userProfile.save();
+  }
+  if (interaction.commandName === "profile") {
+    profileCommand.run({ interaction });
+    userProfile.save();
   }
 });
+
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id))
-    return;
+  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id)) return;
 
   let conversation = [];
   conversation.push({

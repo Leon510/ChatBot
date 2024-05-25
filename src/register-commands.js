@@ -5,12 +5,14 @@ const gambleCommand = require("./commands/economy/gamble"); // Pfad zu Ihrem gam
 const balanceCommand = require("./commands/economy/balance");
 const leaderboardCommand = require("./commands/economy/leaderboard");
 const coinflipCommand = require("./commands/economy/coinflip");
+const profileCommand = require("./commands/economy/profile");
 const commands = [
   dailyCommand.data,
   gambleCommand.data,
   balanceCommand.data,
   leaderboardCommand.data,
   coinflipCommand.data,
+  profileCommand.data,
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);

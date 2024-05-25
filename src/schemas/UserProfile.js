@@ -13,6 +13,33 @@ const userProfileSchema = new Schema(
     lastDailyCollected: {
       type: Date,
     },
+    commands: {
+      type: Number,
+      default: 0,
+    },
+    letzerCommand: {
+      type: Date,
+    },
+    dailyRewardCollected: {
+      type: Number,
+      default: 0,
+    },
+    gewonnen: {
+      type: Number,
+      default: 0,
+    },
+    verloren: {
+      type: Number,
+      default: 0,
+    },
+    level: {
+      type: Number,
+      default: 0,
+    },
+    xp: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

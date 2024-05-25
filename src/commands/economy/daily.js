@@ -16,7 +16,7 @@ module.exports = {
     try {
 
       let userProfile = await UserProfile.findOne({
-        userId: interaction.member.id,
+        userId: interaction.user.id,
       });
 
       if (userProfile) {
@@ -36,11 +36,13 @@ module.exports = {
         }
       } else {
         userProfile = new UserProfile({
-          userId: interaction.member.id,
+          userId: interaction.user.id,
         });
       }
 
-      userProfile.balance += dailyAmount;
+      userProfile.balance += dailyAmount;  
+      userProfile.dailyRewardCollected += 1;
+  
       userProfile.lastDailyCollected = new Date();
       await userProfile.save();
 
