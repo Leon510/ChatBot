@@ -12,7 +12,7 @@ module.exports = {
     }
     try {
       let userProfile = await UserProfile.findOne({
-        userId: interaction.member.id,
+        userId: interaction.user.id,
       });
       if (userProfile) {
         const embed = new EmbedBuilder()
@@ -23,7 +23,7 @@ module.exports = {
         await interaction.reply({ embeds: [embed] });
       } else {
         userProfile = new UserProfile({
-          userId: interaction.member.id,
+          userId: interaction.user.id,
         });
         const embed = new EmbedBuilder()
 

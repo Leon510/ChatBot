@@ -4,6 +4,9 @@ const UserProfile = require("../../schemas/UserProfile");
 module.exports = {
   run: async ({ interaction }) => {
     try {
+      // Send a preliminary reply
+      await interaction.deferReply();
+
       // Find all user profiles and sort them by balance in descending order
       const userProfiles = await UserProfile.find().sort({ balance: -1 });
 
@@ -13,7 +16,7 @@ module.exports = {
         .setTitle("Leaderboard");
 
       // Add each user to the embed
-      for (let i = 0; i < userProfiles.length; i++) {
+      for (let i = 0; i < Math.min(userProfiles.length, 4); i++) {
         const profile = userProfiles[i];
         // Fetch the user to get their username and avatar
         const user = await interaction.client.users.fetch(profile.userId);
@@ -28,8 +31,8 @@ module.exports = {
         embed.addFields({ name: '\u200b', value: `${medal} - **${profile.balance}€**  ${user.tag}`, inline: false });
       }
   
-      // Send the embed
-      await interaction.reply({ embeds: [embed] });
+      // Update the reply with the final embed
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.log(error);
     }
