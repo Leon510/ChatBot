@@ -7,6 +7,7 @@ module.exports = {
     try {
       // Überprüfen, ob die Interaktion gültig ist
       if (!interaction) return;
+      await interaction.deferReply();
 
       const targetUser =
         interaction.options.getUser("user") || interaction.user;
@@ -53,6 +54,11 @@ module.exports = {
         value: `${userProfile.verloren}€`,
         inline: false,
       });
+      embed.addFields({
+        name: "Level",
+        value: `${userProfile.level}`,
+        inline: false,
+      });
 
       // Calculate the total XP for the current level
       const totalXP = calculateLevelXP(userProfile.level);
@@ -75,7 +81,7 @@ module.exports = {
         inline: false,
       });
 
-      await interaction.reply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.log(error);
     }
