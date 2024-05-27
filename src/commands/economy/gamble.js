@@ -84,7 +84,11 @@ module.exports = {
           .setColor(0x0099ff)
           .setDescription(
             `Die Zahl ist **${number}!**  Du hast  **${amount}€** gewonnen!`
-          );
+          )
+          .addFields({
+            name: "\u200b",
+            value: `Du hast **${xpToGive}** erhalten`,
+          })
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       } else {
         userProfile.verloren += amount;
@@ -93,7 +97,11 @@ module.exports = {
           .setColor(0x0099ff)
           .setDescription(
             `Die Zahl ist **${number}!**  Du hast  **${amount}€** verloren!`
-          );
+          )
+          .addFields({
+            name: "\u200b",
+            value: `Du hast **${xpToGive}** erhalten`,
+          })
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       }
 
