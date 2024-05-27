@@ -11,6 +11,7 @@ const coinflipCommand = require("./commands/economy/coinflip");
 const profileCommand = require("./commands/economy/profile");
 const UserProfile = require("./schemas/UserProfile");
 const giveUserXP = require("./commands/economy/messageCreate/giveUserXp");
+const transferCommand = require("./commands/economy/transfer");
 
 const CHANNELS = [process.env.CHANNEL];
 const IGNORE_PREFIX = "!";
@@ -83,6 +84,10 @@ client.on("interactionCreate", async (interaction) => {
   }
   if (interaction.commandName === "profile") {
     profileCommand.run({ interaction });
+    userProfile.save();
+  }
+  if (interaction.commandName === "transfer") {
+    transferCommand.run({ interaction });
     userProfile.save();
   }
 });
