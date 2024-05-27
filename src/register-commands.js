@@ -6,6 +6,7 @@ const balanceCommand = require("./commands/economy/balance");
 const leaderboardCommand = require("./commands/economy/leaderboard");
 const coinflipCommand = require("./commands/economy/coinflip");
 const profileCommand = require("./commands/economy/profile");
+const transferCommand = require("./commands/economy/transfer");
 const commands = [
   dailyCommand.data,
   gambleCommand.data,
@@ -13,6 +14,7 @@ const commands = [
   leaderboardCommand.data,
   coinflipCommand.data,
   profileCommand.data,
+  transferCommand.data
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);

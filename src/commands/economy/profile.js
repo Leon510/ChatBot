@@ -25,7 +25,7 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(0x0099ff)
-        .setTitle("Dein Profil")
+        .setTitle(`Profil von ${targetUser.username}` )
         .setDescription(`Kontostand** ${userProfile.balance}€**`);
       embed.addFields({
         name: "Gesamte Commands",
