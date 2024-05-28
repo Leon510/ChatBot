@@ -87,7 +87,7 @@ module.exports = {
           )
           .addFields({
             name: "\u200b",
-            value: `Du hast **${xpToGive}** erhalten`,
+            value: `Du hast **${xpToGive}XP** erhalten`,
           })
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       } else {
@@ -100,7 +100,7 @@ module.exports = {
           )
           .addFields({
             name: "\u200b",
-            value: `Du hast **${xpToGive}** erhalten`,
+            value: `Du hast **${xpToGive}XP** erhalten`,
           })
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       }
