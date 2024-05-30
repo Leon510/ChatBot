@@ -14,7 +14,8 @@ module.exports = {
 
       if (!interaction.inGuild()) {
         await interaction.followUp({
-          content: "Du musst in einem Server sein um diesen Command auszuführen!",
+          content:
+            "Du musst in einem Server sein um diesen Command auszuführen!",
           ephemeral: true,
         });
         return;
@@ -79,7 +80,7 @@ module.exports = {
       if (number > 50) {
         userProfile.balance += amount * 2;
         userProfile.gewonnen += amount;
-        xpToGive = 25;
+        xpToGive = Math.floor(amount / 5);
         const embed = new EmbedBuilder()
           .setColor(0x0099ff)
           .setDescription(
@@ -88,7 +89,7 @@ module.exports = {
           .addFields({
             name: "\u200b",
             value: `Du hast **${xpToGive}XP** erhalten`,
-          })
+          });
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       } else {
         userProfile.verloren += amount;
@@ -101,7 +102,7 @@ module.exports = {
           .addFields({
             name: "\u200b",
             value: `Du hast **${xpToGive}XP** erhalten`,
-          })
+          });
         await interaction.followUp({ embeds: [embed], ephemeral: true });
       }
 

@@ -40,10 +40,10 @@ module.exports = {
         return;
       }
 
-      if (amount > 200) {
+      if (amount > 2000) {
         const embed = new EmbedBuilder()
           .setColor(0x0099ff)
-          .setDescription("Es darf maximal 200€ betragen!");
+          .setDescription("Es darf maximal 2000€ betragen!");
         await interaction.reply({ embeds: [embed], ephemeral: true });
         return;
       }
@@ -91,7 +91,7 @@ module.exports = {
         if (i.values[0] === result) {
           userProfile.balance += amount;
           userProfile.gewonnen += amount;
-          xpToGive = 25;
+          xpToGive = Math.floor(amount / 5);
           const embed = new EmbedBuilder()
             .setColor(0x00ff00) // Grün für Gewinn
             .setTitle("Glückwunsch!")
