@@ -40,6 +40,8 @@ const userProfileSchema = new Schema(
       type: Number,
       default: 0,
     },
+    digCommandsPerDay: { type: Number, default: 0 },
+    lastDigCommandDate: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

@@ -12,7 +12,7 @@ const profileCommand = require("./commands/economy/profile");
 const UserProfile = require("./schemas/UserProfile");
 const giveUserXP = require("./commands/economy/messageCreate/giveUserXp");
 const transferCommand = require("./commands/economy/transfer");
-
+const digCommand = require("./commands/economy/dig");
 const CHANNELS = [process.env.CHANNEL];
 const IGNORE_PREFIX = "!";
 
@@ -30,7 +30,9 @@ const client = new Client({
 });
 
 client.once("ready", () => {
-  console.log(`Ready! Logged in as ${client.user.tag}! I'm on ${client.guilds.cache.size} servers!`);
+  console.log(
+    `Ready! Logged in as ${client.user.tag}! I'm on ${client.guilds.cache.size} servers!`
+  );
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -40,7 +42,8 @@ client.on("interactionCreate", async (interaction) => {
   const lastCommand = cooldowns.get(interaction.user.id);
   if (lastCommand && Date.now() - lastCommand < 3000) {
     interaction.reply({
-      content: "Du musst 3 Sekunden warten, bevor du einen Befehl erneut ausführen kannst!",
+      content:
+        "Du musst 3 Sekunden warten, bevor du einen Befehl erneut ausführen kannst!",
       ephemeral: true,
     });
     return;
@@ -90,11 +93,35 @@ client.on("interactionCreate", async (interaction) => {
     transferCommand.run({ interaction });
     userProfile.save();
   }
+  if (interaction.commandName === "dig") {
+    const today = new Date().setHours(0, 0, 0, 0);
+    const lastDigCommandDate = new Date(
+      userProfile.lastDigCommandDate
+    ).setHours(0, 0, 0, 0);
+
+    if (today === lastDigCommandDate && userProfile.digCommandsPerDay >= 3) {
+      interaction.reply({
+        content: "Du kannst den Befehl /dig nur dreimal pro Tag ausführen!",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    if (today !== lastDigCommandDate) {
+      userProfile.digCommandsPerDay = 0;
+      userProfile.lastDigCommandDate = Date.now();
+    }
+
+    digCommand.run({ interaction });
+    userProfile.digCommandsPerDay += 1;
+    userProfile.save();
+  }
 });
 
-client.on("messageCreate", async (message) => {
+/* client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id)) return;
+  if (message.channel.type !== 1 && !CHANNELS.includes(message.channel.id))
+    return;
 
   let conversation = [];
   conversation.push({
@@ -132,7 +159,7 @@ client.on("messageCreate", async (message) => {
     messages: conversation,
   });
   message.reply(response.choices[0].message.content);
-});
+}); */
 
 (async () => {
   await mongoose.connect(process.env.MONGODB_URI);
