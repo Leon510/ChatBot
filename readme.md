@@ -1,3 +1,7 @@
+Important Nodes:
+
+Discord.js V14
+
 Hosting commands:
 
 $ docker build --platform=linux/arm64 -t (name)/(containername):(mytag) .
