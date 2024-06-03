@@ -1,5 +1,10 @@
 const { Schema, model } = require("mongoose");
 
+const itemSchema = new Schema({
+  name: { type: String, required: true },
+  quantity: { type: Number, default: 1 }
+});
+
 const userProfileSchema = new Schema(
   {
     userId: {
@@ -40,8 +45,18 @@ const userProfileSchema = new Schema(
       type: Number,
       default: 0,
     },
-    digCommandsPerDay: { type: Number, default: 0 },
-    lastDigCommandDate: { type: Date, default: Date.now },
+    items: {
+      type: [itemSchema], // Array of subdocuments
+      default: [],
+    },
+    digCommandsPerDay: {
+      type: Number,
+      default: 0,
+    },
+    lastDigCommandDate: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );

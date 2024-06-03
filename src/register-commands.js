@@ -8,6 +8,7 @@ const coinflipCommand = require("./commands/economy/coinflip");
 const profileCommand = require("./commands/economy/profile");
 const transferCommand = require("./commands/economy/transfer");
 const digCommand = require("./commands/economy/dig");
+const shopCommand = require("./commands/economy/shop");
 const commands = [
   dailyCommand.data,
   gambleCommand.data,
@@ -17,6 +18,7 @@ const commands = [
   profileCommand.data,
   transferCommand.data,
   digCommand.data,
+  shopCommand.data,
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
