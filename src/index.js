@@ -10,9 +10,11 @@ const leaderboardCommand = require("./commands/economy/leaderboard");
 const coinflipCommand = require("./commands/economy/coinflip");
 const profileCommand = require("./commands/economy/profile");
 const UserProfile = require("./schemas/UserProfile");
+const ShopItem = require("./schemas/ShopItem");
 const giveUserXP = require("./commands/economy/messageCreate/giveUserXp");
 const transferCommand = require("./commands/economy/transfer");
 const digCommand = require("./commands/economy/dig");
+const shopCommand = require("./commands/economy/shop");
 const CHANNELS = [process.env.CHANNEL];
 const IGNORE_PREFIX = "!";
 
@@ -36,6 +38,75 @@ client.once("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton()) {
+    if (!interaction.customId.startsWith("buy_")) return;
+
+    const itemName = interaction.customId.slice(4);
+    const userProfile = await UserProfile.findOne({
+      userId: interaction.user.id,
+    });
+    const shopItem = await ShopItem.findOne({ name: itemName });
+
+    if (!shopItem) {
+      interaction.reply({
+        content: "Dieser Artikel existiert nicht!",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    if (userProfile.balance < shopItem.cost) {
+      interaction.reply({
+        content: "Du hast nicht genug Geld, um diesen Artikel zu kaufen!",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    userProfile.balance -= shopItem.cost;
+
+    let userItem = userProfile.items.find((item) => item.name === itemName);
+
+    if (itemName === "Alpha Coin") {
+      if (userProfile.gewonnen > 200000) {
+        if (userItem) {
+          userItem.quantity += 1;
+        } else {
+          userProfile.items.push({ name: itemName, quantity: 1 });
+        }
+        interaction.reply({
+          content: `Du hast erfolgreich einen ${itemName} gekauft!`,
+          ephemeral: true,
+        });
+      } else {
+        interaction.reply({
+          content: "Du hast nicht genug Gewonnen, um diesen Artikel zu kaufen!",
+          ephemeral: true,
+        });
+      }
+      return;
+    }
+    if (userItem) {
+      userItem.quantity += 1;
+    } else {
+      userProfile.items.push({ name: itemName, quantity: 1 });
+    }
+
+    try {
+      await userProfile.save();
+      interaction.reply({
+        content: `Du hast erfolgreich einen ${itemName} gekauft!`,
+        ephemeral: true,
+      });
+    } catch (error) {
+      console.error("Fehler beim Speichern des Benutzerprofils:", error);
+      interaction.reply({
+        content:
+          "Es gab einen Fehler beim Speichern deines Kaufs. Bitte versuche es erneut.",
+        ephemeral: true,
+      });
+    }
+  }
   if (!interaction.isCommand()) return;
 
   // Check if the user is on cooldown
@@ -93,6 +164,11 @@ client.on("interactionCreate", async (interaction) => {
     transferCommand.run({ interaction });
     userProfile.save();
   }
+  if (interaction.commandName === "shop") {
+    shopCommand.run({ interaction });
+    userProfile.save();
+  }
+
   if (interaction.commandName === "dig") {
     const today = new Date().setHours(0, 0, 0, 0);
     const lastDigCommandDate = new Date(
