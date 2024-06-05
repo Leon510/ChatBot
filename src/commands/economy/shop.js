@@ -58,8 +58,7 @@ module.exports = {
         ]);
       });
 
-      await interaction.reply({ embeds: [embed], components: rows });
-
+      await interaction.reply({ embeds: [embed], components: rows });  
       await userProfile.save();
     } catch (error) {
       console.log(error);
